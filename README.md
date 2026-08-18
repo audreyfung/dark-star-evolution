@@ -2,6 +2,8 @@
 
 The code models the coupled evolution of a dark star embedded within a baryonic star. The baryonic star is evolved with [MESA (https://docs.mesastar.org/), while the dark star is evolved using the instantaneous stellar structure of the baryonic star. The resulting dark star mass distribution determines the additional gravitational field acting on the baryonic star, which is then fed back into MESA.
 
+## Coupled evolution
+
 ```mermaid
 flowchart TB
     MESA["MESA<br/>Baryonic Star"]
