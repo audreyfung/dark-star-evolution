@@ -126,57 +126,6 @@ contains
 
     end function interp_dark_rho
 
-    function interp_array(x, xp, yp, left, right) result(y)
-        real(dp), intent(in) :: x(:)        ! A 1D array of points you want to evaluate
-        real(dp), intent(in) :: xp(:)       ! Your reference X lookup grid
-        real(dp), intent(in) :: yp(:)       ! Your reference Y lookup grid
-        real(dp), intent(in), optional :: left
-        real(dp), intent(in), optional :: right
-        
-        real(dp) :: y(size(x))              ! Output array matching the exact size of x
-        
-        integer :: n_xp, n_x, i, j
-        real(dp) :: weight
-
-        n_xp = size(xp)
-        n_x  = size(x)
-
-        do j = 1, n_x
-            
-            ! 1. Handle Out-of-Bounds (Left Side)
-            if (x(j) < xp(1)) then
-                if (present(left)) then
-                    y(j) = left
-                else
-                    y(j) = yp(1)
-                end if
-                cycle
-            end if
-
-            ! 2. Handle Out-of-Bounds (Right Side)
-            if (x(j) > xp(n_xp)) then
-                if (present(right)) then
-                    y(j) = right
-                else
-                    y(j) = yp(n_xp)
-                end if
-                cycle
-            end if
-
-            ! 3. Find the interval for x(j)
-            i = 1
-            do while (i < n_xp .and. xp(i+1) < x(j))
-                i = i + 1
-            end do
-
-            ! 4. Linear Interpolation for x(j)
-            weight = (x(j) - xp(i)) / (xp(i+1) - xp(i))
-            y(j) = yp(i) + weight * (yp(i+1) - yp(i))
-
-        end do
-
-    end function interp_array
-
     subroutine print_data(data, filename, log_number)
         real(dp), intent(in) :: data(:)
         integer, intent(in) :: log_number
@@ -232,20 +181,6 @@ contains
         close(io_unit)
 
     end subroutine print_DS_profile
-
-    subroutine get_xrange(star_radius, x_range)
-        real(dp), intent(in) :: star_radius(:)
-        real(dp), intent(out) :: x_range(:)
-        real(dp) :: xstart, xend, x_outer(50)
-        integer :: i
-        
-        xstart = star_radius(1) + 5
-        xend = star_radius(1)
-        x_outer = [(xstart + (i-1) * (xend - xstart) / 50, i = 1, 50)]
-
-        x_range = [x_outer, star_radius]
-
-    end subroutine get_xrange
 
     subroutine get_DS_xrange(x_range)
         real(dp), intent(out) :: x_range(:)
